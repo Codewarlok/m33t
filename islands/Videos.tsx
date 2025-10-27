@@ -79,6 +79,9 @@ export default function Videos(props: Props) {
         setLocalStream(null);
         return;
       }
+      if (typeof navigator === "undefined" || !navigator.mediaDevices) {
+        throw new Error("getDisplayMedia not available");
+      }
       const stream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
       });
@@ -97,7 +100,7 @@ export default function Videos(props: Props) {
     } catch (error) {
       alert(error);
     }
-  }, [ws, sharing, navigator.mediaDevices]);
+  }, [ws, sharing]);
 
   const changeUsername = useCallback(
     (name: string) => {
@@ -180,13 +183,16 @@ export default function Videos(props: Props) {
   useEffect(() => {
     if (!localStream) return;
 
-    const { protocol, host } = location;
+    // `location` is a browser global. Use `globalThis.location` guarded so
+    // SSR won't throw when this effect is evaluated/compiled on the server.
+    const g = globalThis as unknown as { location?: { protocol?: string; host?: string } };
+    const protocol = g.location?.protocol ?? "http:";
+    const host = g.location?.host ?? "localhost:8000";
     let wsProtocol = "ws";
     if (protocol.includes("https")) {
       wsProtocol = "wss";
     }
-    const url =
-      `${wsProtocol}://${host}/api/ws?clientId=${id}&room=${props.room}`;
+    const url = `${wsProtocol}://${host}/api/ws?clientId=${id}&room=${props.room}`;
     const ws = new WebSocket(url);
     ws.onopen = () => {
       ws.send(JSON.stringify({ type: "join" }));

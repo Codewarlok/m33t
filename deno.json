@@ -1,4 +1,5 @@
 {
+  "$schema": "https://json.schemastore.org/deno.json",
   "tasks": {
     "start": "deno --unstable run -A --watch=static/,routes/ dev.ts"
   },

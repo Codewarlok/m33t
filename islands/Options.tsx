@@ -69,10 +69,18 @@ function Info(props: {
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (window.location) {
-      setLink(window.location.href);
+    // Only access `globalThis.location` on the client. During SSR `globalThis`
+    // may not have `location`, so guard and run this effect only on the client
+    // after hydration.
+    if (typeof globalThis !== "undefined" && "location" in globalThis) {
+      // `location` may not be typed on the server global; narrow its shape
+      // safely without using `any` so linting/typechecks remain strict.
+      const g = globalThis as unknown as { location?: { href?: string } };
+      if (g.location?.href) {
+        setLink(g.location.href);
+      }
     }
-  }, [window.location]);
+  }, []);
 
   useEffect(() => {
     if (props.username && inputRef.current) {
@@ -81,7 +89,9 @@ function Info(props: {
   }, [props.username, inputRef.current]);
 
   const copy = useCallback(() => {
-    if (navigator.clipboard) {
+    // navigator may be undefined during SSR; guard access and only use
+    // clipboard when available on the client.
+    if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard
         .writeText(link)
         .then(() => {
@@ -90,7 +100,7 @@ function Info(props: {
         })
         .catch(console.error);
     }
-  }, [navigator.clipboard, link]);
+  }, [link]);
 
   const searchDebounce = useCallback(
     debounce(1000, (text: string) => {
@@ -126,7 +136,7 @@ function Info(props: {
       </div>
       <div class="flex flex-row">
         <iframe
-          src="https://ghbtns.com/github-btn.html?user=dunkbing&repo=m33t&type=star&count=true"
+          src=""
           frameBorder="0"
           scrolling="0"
           width="150"
@@ -208,6 +218,7 @@ export default function Options(props: OptionsProps) {
             : <IconScreenShare />}
         </OptionWrap>
         <button
+          type="button"
           class="p-2 bg-red-400 font-bold text-white border border-b-4 border-r-4 border-red-600 rounded-lg shadow-lg hover:bg-red-500 hover:shadow-sm hover:border-b-2 hover:border-r-2"
           onClick={() => close?.()}
         >

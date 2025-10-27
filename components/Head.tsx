@@ -5,7 +5,13 @@ type Props = {
   title_?: string;
 };
 
-export default function (props: JSX.HTMLAttributes<HTMLHeadElement> & Props) {
+// Ensure this component only renders on the server. Fresh's <Head>
+// is not supported in the browser or during suspense / client renders.
+export default function ServerHead(props: JSX.HTMLAttributes<HTMLHeadElement> & Props) {
+  // If running in the browser, render nothing to avoid the
+  // "<Head> component is not supported in the browser" runtime error.
+  if (typeof window !== "undefined") return null;
+
   return (
     <Head>
       <meta
@@ -19,7 +25,7 @@ export default function (props: JSX.HTMLAttributes<HTMLHeadElement> & Props) {
         name="google-site-verification"
         content="wJ-E87GIP8mU2xH-PEAsdh1UXR3wVOoduS5xJ7nuHO8"
       />
-      <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+      <meta httpEquiv="Content-Type" content="text/html; charset=utf-8" />
       <meta
         name="viewport"
         content="width=device-width, height=device-height, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
