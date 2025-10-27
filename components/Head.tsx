@@ -50,7 +50,7 @@ export default function ServerHead(props: JSX.HTMLAttributes<HTMLHeadElement> & 
         property="og:description"
         content="A free, peer-to-peer group video calling web application. No signups. No downloads"
       />
-      <meta property="article:author" content="https://github.com/dunkbing" />
+      <meta property="article:author" content="https://github.com/Codewarlok" />
       <title>
         {props.title_ || "M33t - Free group video call for the web"}
       </title>
