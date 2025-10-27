@@ -10,8 +10,7 @@
   "@preact/signals": "https://esm.sh/@preact/signals@1.0.3",
   "@preact/signals-core": "https://esm.sh/@preact/signals-core@1.0.1",
     "telegram": "https://deno.land/x/telegram_bot_api@0.4.0/mod.ts",
-    "ticons": "https://deno.land/x/tabler_icons_tsx@0.0.2",
-    "ticons/": "https://deno.land/x/tabler_icons_tsx@0.0.2/",
+  "ticons/": "https://deno.land/x/tabler_icons_tsx@0.0.7/",
     "twas": "https://esm.sh/twas@2.1.2",
     "twind": "https://esm.sh/twind@0.16.17",
     "twind/": "https://esm.sh/twind@0.16.17/"
